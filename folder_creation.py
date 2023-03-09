@@ -8,6 +8,8 @@ xlsx_path = ''
 folder_path = ''
 root = Tk()
 root.title("Excel manager")
+root.geometry("380x180")
+root.resizable(False, False)
 
 db_button = Button(root, text="Wybierz plik Excel", command=lambda: openFile())
 db_button.grid(row=0, column=0)
@@ -25,7 +27,7 @@ db_name_label2 = Label(root, text=folder_path)
 db_name_label2.grid(row=6, column=0)
 
 open_button = Button(root, text="Wykonaj", command=lambda: transformExcel())
-open_button.grid(row=7, column=1)
+open_button.grid(row=7, column=0)
 
 def openFile():
     global xlsx_path
