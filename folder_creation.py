@@ -51,7 +51,7 @@ progress_label = Label(frame_progress, text="Postęp kopiowania plików")
 progress_label.grid(row=1, column=0, padx=5, pady=5)
 ramka = Frame(frame_progress)
 ramka.grid(row=2, column=0)
-progress_bar = Progressbar(ramka, orient=HORIZONTAL, length=100, mode='determinate')
+progress_bar = Progressbar(ramka, orient=HORIZONTAL, length=100, mode='determinate', maximum=100)
 progress_bar.pack(pady=10)
 
 error_label = Label(main_frame, text='')
@@ -129,8 +129,9 @@ def transform_excel():
         return
 
     # Loop through the rows of the worksheet
-    for i, row in enumerate(worksheet.iter_rows(min_row=2, values_only=True), start=0):
-        progress_bar['value'] = (i / worksheet.max_row) * 100
+    for i, row in enumerate(worksheet.iter_rows(min_row=2, values_only=True), start=1):
+        progress_bar['value'] = (i / (worksheet.max_row - 1)) * 100
+        print(i, worksheet.max_row)
         progress_bar.update()
         # Get the values from the columns
         try:
