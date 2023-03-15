@@ -15,14 +15,14 @@ main_frame.pack(padx=50, pady=50)
 
 frame_excel = Frame(main_frame, highlightbackground="grey", highlightthickness=1)
 frame_excel.pack(padx=5, pady=5)
-db_button = Button(frame_excel, text="Wybierz plik Excel", command=lambda: open_file())
+db_button = Button(frame_excel, text="Choose Excel file", command=lambda: open_file())
 db_button.grid(row=1, column=0, padx=5, pady=5)
-db_name_label1 = Label(frame_excel, text='Plik Excel nie zostal wybrany')
+db_name_label1 = Label(frame_excel, text='Excel file not chosen')
 db_name_label1.grid(row=2, column=0, padx=5, pady=5)
 
 frame_excel2 = Frame(main_frame, highlightbackground="grey", highlightthickness=1)
 frame_excel2.pack(padx=5, pady=5)
-db_name_label = Label(frame_excel2, text="Wybierz arkusz: ")
+db_name_label = Label(frame_excel2, text="Choose sheet: ")
 db_name_label.grid(row=1, column=0, padx=5, pady=5)
 sheet_variable = StringVar()
 sheet_dropdown = OptionMenu(frame_excel2, sheet_variable, [])
@@ -30,24 +30,24 @@ sheet_dropdown.grid(row=2, column=0, padx=5, pady=5)
 
 frame_folder1 = Frame(main_frame, highlightbackground="grey", highlightthickness=1)
 frame_folder1.pack(padx=5, pady=5)
-open_button = Button(frame_folder1, text="Wybierz folder z plikami", command=lambda: open_folder())
+open_button = Button(frame_folder1, text="Choose folder with files", command=lambda: open_folder())
 open_button.grid(row=1, column=0, padx=5, pady=5)
-db_name_label2 = Label(frame_folder1, text='Folder z plikami nie zostal wybrany')
+db_name_label2 = Label(frame_folder1, text='Folder with files has not been chosen')
 db_name_label2.grid(row=2, column=0, padx=5, pady=5)
 
 frame_folder2 = Frame(main_frame, highlightbackground="grey", highlightthickness=1)
 frame_folder2.pack(padx=5, pady=5)
-open_button2 = Button(frame_folder2, text="Wybierz folder docelowy", command=lambda: select_output_folder())
+open_button2 = Button(frame_folder2, text="Choose output folder", command=lambda: select_output_folder())
 open_button2.grid(row=1, column=0, padx=5, pady=5)
-db_name_label3 = Label(frame_folder2, text='Folder docelowy nie zostal wybrany')
+db_name_label3 = Label(frame_folder2, text='Output folder has not been chosen')
 db_name_label3.grid(row=2, column=0, padx=5, pady=5)
 
-open_button3 = Button(main_frame, height= 5, width=20, text="Wykonaj", command=lambda: transform_excel())
+open_button3 = Button(main_frame, height= 5, width=20, text="Copy files", command=lambda: transform_excel())
 open_button3.pack(padx=5, pady=5)
 
 frame_progress = Frame(main_frame, highlightbackground="grey", highlightthickness=1 )
 frame_progress.pack(padx=5, pady=5)
-progress_label = Label(frame_progress, text="Postęp kopiowania plików")
+progress_label = Label(frame_progress, text="File copy progress")
 progress_label.grid(row=1, column=0, padx=5, pady=5)
 ramka = Frame(frame_progress)
 ramka.grid(row=2, column=0)
@@ -106,15 +106,15 @@ def transform_excel():
     # Check if the XLSX file path is valid
     if not os.path.isfile(xlsx_path) or not xlsx_path.endswith('.xlsx'):
         with open(os.path.join(output_folder, 'errors.txt'), 'a+') as f:
-            f.write(f'Zly plik Excel\n {now}')
-        error_label.config(text='Zly plik Excel')
+            f.write(f'Invalid Excel file\n {now}')
+        error_label.config(text='Invalid Excel file')
         return
         
     # Check if the folder path is valid
     if not os.path.isdir(folder_path):
         with open(os.path.join(output_folder, 'errors.txt'), 'a+') as f:
-            f.write(f'Zla sciezka folderu z plikami\n {now}')
-        error_label.config(text='Zla sciezka folderu z plikami')
+            f.write(f'Invalid files path\n {now}')
+        error_label.config(text='Invalid files path')
         return
             
     workbook = load_workbook(xlsx_path)
@@ -124,22 +124,21 @@ def transform_excel():
         worksheet = workbook[worksheet_name]
     except KeyError:
         with open(os.path.join(output_folder, 'errors.txt'), 'a+') as f:
-            f.write(f'Zla nazwa arkusza: {worksheet_name} {now}\n')
-        error_label.config(text=f'Zla nazwa arkusza: {worksheet_name}')
+            f.write(f'Invalid sheet name: {worksheet_name} {now}\n')
+        error_label.config(text=f'Invalid sheet name: {worksheet_name}')
         return
 
     # Loop through the rows of the worksheet
     for i, row in enumerate(worksheet.iter_rows(min_row=2, values_only=True), start=1):
         progress_bar['value'] = (i / (worksheet.max_row - 1)) * 100
-        print(i, worksheet.max_row)
         progress_bar.update()
         # Get the values from the columns
         try:
             col1, col2, col3, col4 = row
         except ValueError:
             with open(os.path.join(output_folder, 'errors.txt'), 'a+') as f:
-                f.write(f'Zle dane w wierszu: {row}\n {now}')
-            error_label.config(text=f'Zle dane w wierszu: {row}')
+                f.write(f'Invalid data in row: {row}\n {now}')
+            error_label.config(text=f'Invalid data in row: {row}')
             continue
 
         # Determine the child folder path
@@ -162,16 +161,16 @@ def transform_excel():
                     dst_path = os.path.join(child_folder, dst_filename)
                     if os.path.exists(dst_path):
                         with open(os.path.join(output_folder, 'errors.txt'), 'a+') as f:
-                            f.write(f'Plik {dst_path} juz istnieje\n {now}\n')
-                        error_label.config(text=f'Plik {dst_path} juz istnieje')
+                            f.write(f'File {dst_path} already exists\n {now}\n')
+                        error_label.config(text=f'File {dst_path} already exists')
                         continue
                     try:
                         shutil.copy(src_path, dst_path)
-                        error_label.config(text='Pliki skopiowane poprawnie')
+                        error_label.config(text='Files copied properly')
                     except Exception as e:
                         with open(os.path.join(output_folder, 'errors.txt'), 'a+') as f:
-                            f.write(f'Blad kopiowania pliku {src_path} to {dst_path}: {e} {now}\n')
-                        error_label.config(text=f'Blad kopiowania pliku {src_path} to {dst_path}: {e}')
+                            f.write(f'file copy error {src_path} to {dst_path}: {e} {now}\n')
+                        error_label.config(text=f'File copy error {src_path} to {dst_path}: {e}')
 
 
 root.mainloop()
